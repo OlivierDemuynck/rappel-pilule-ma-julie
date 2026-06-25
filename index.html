@@ -625,8 +625,11 @@
       scheduleNotif();
     }
   });
-
- const firebaseConfig = {
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
+<script>
+const firebaseConfig = {
   apiKey: "AIzaSyCNQArb_KpJuRiJ_7H3lfPFpNrVmrO6G_4",
   authDomain: "pilule-julie.firebaseapp.com",
   projectId: "pilule-julie",
@@ -634,12 +637,15 @@
   messagingSenderId: "455161985108",
   appId: "1:455161985108:web:88f913e246d887725195c1"
 };
- 
+
+firebase.initializeApp(firebaseConfig);
+
+// ⚠️ IMPORTANT : messaging doit être ici
+const messaging = firebase.messaging();
 </script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
-<script>
+ <script>
 async function initNotif() {
+
   const permission = await Notification.requestPermission();
 
   if (permission !== "granted") {
@@ -647,12 +653,18 @@ async function initNotif() {
     return;
   }
 
-  const token = await messaging.getToken({
-    vapidKey: "TON_VAPID_KEY"
-  });
+  try {
+    const token = await messaging.getToken({
+      vapidKey: "BFV02df0IP-hQT8Qm3WYfjDaUU-lNoBiGxoGiPhhZP79VYPImCHK7xYZ8QJ6-gBIIIBjBIhRn3MVSiWOFunErhk"
+    });
 
-  console.log("TOKEN TELEPHONE :", token);
-  alert("Notifications OK !");
+    console.log("TOKEN:", token);
+    alert("TOKEN récupéré ! Regarde la console.");
+
+  } catch (err) {
+    console.error("Erreur Firebase:", err);
+    alert("Erreur Firebase (regarde console)");
+  }
 }
 
 window.initNotif = initNotif;
