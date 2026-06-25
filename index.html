@@ -642,41 +642,29 @@
 
   firebase.initializeApp(firebaseConfig);
  const swPromise = navigator.serviceWorker.register(
-  '/rappel-pilule-ma-julie/firebase-messaging-sw.js'
+  './firebase-messaging-sw.js'
 );
 
   // 2. IMPORTANT : messaging DOIT être ici
   const messaging = firebase.messaging();
-
+ 
+const swPromise = navigator.serviceWorker.register('./firebase-messaging-sw.js');
   // 3. FUNCTION NOTIF
 async function initNotif() {
-
   try {
     const permission = await Notification.requestPermission();
+    if (permission !== "granted") return;
 
-    if (permission !== "granted") {
-      alert("Notifications refusées");
-      return;
-    }
-
-    // Firebase gère le service worker tout seul (IMPORTANT)
-const sw = await swPromise;
-
-const token = await messaging.getToken({
-  vapidKey: "BFV02df0IP-hQT8Qm3WYfjDaUU-lNoBiGxoGiPhhZP79VYPImCHK7xYZ8QJ6-gBIIIBjBIhRn3MVSiWOFunErhk",
-  serviceWorkerRegistration: sw
-});
+    const token = await messaging.getToken({
+      vapidKey: "BFV02df0IP-hQT8Qm3WYfjDaUU-lNoBiGxoGiPhhZP79VYPImCHK7xYZ8QJ6-gBIIIBjBIhRn3MVSiWOFunErhk"
+    });
 
     console.log("TOKEN:", token);
-    alert("TOKEN récupéré (regarde console)");
-
+    alert("TOKEN récupéré");
   } catch (err) {
-    console.error("Erreur Firebase:", err);
-    alert("Erreur Firebase (console)");
+    console.error(err);
   }
 }
-
-window.initNotif = initNotif;
 </script>
 </body>
 </html>
