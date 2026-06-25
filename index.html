@@ -646,34 +646,30 @@
   const messaging = firebase.messaging();
 
   // 3. FUNCTION NOTIF
-  async function initNotif() {
+async function initNotif() {
 
-    try {
-      const permission = await Notification.requestPermission();
+  try {
+    const permission = await Notification.requestPermission();
 
-      if (permission !== "granted") {
-        alert("Notifications refusées");
-        return;
-      }
-
-      // IMPORTANT: token Firebase
-const token = await messaging.getToken({
-  vapidKey: "BFV02df0IP-hQT8Qm3WYfjDaUU-lNoBiGxoGiPhhZP79VYPImCHK7xYZ8QJ6-gBIIIBjBIhRn3MVSiWOFunErhk",
-  serviceWorkerRegistration: await navigator.serviceWorker.register(
-    "/rappel-pilule-ma-julie/firebase-messaging-sw.js"
-  )
-});
-
-      console.log("TOKEN:", token);
-      alert("TOKEN récupéré (regarde console)");
-
-    } catch (err) {
-      console.error("Erreur Firebase:", err);
-      alert("Erreur Firebase (console)");
+    if (permission !== "granted") {
+      alert("Notifications refusées");
+      return;
     }
-  }
 
-  window.initNotif = initNotif;
-</script>
+    // Firebase gère le service worker tout seul (IMPORTANT)
+    const token = await messaging.getToken({
+      vapidKey: "BFV02df0IP-hQT8Qm3WYfjDaUU-lNoBiGxoGiPhhZP79VYPImCHK7xYZ8QJ6-gBIIIBjBIhRn3MVSiWOFunErhk"
+    });
+
+    console.log("TOKEN:", token);
+    alert("TOKEN récupéré (regarde console)");
+
+  } catch (err) {
+    console.error("Erreur Firebase:", err);
+    alert("Erreur Firebase (console)");
+  }
+}
+
+window.initNotif = initNotif;s
 </body>
 </html>
