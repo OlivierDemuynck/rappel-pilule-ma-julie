@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#080e24">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mon Cœur">
+<title>Mon Cœur</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --night:   #080e24;
+    --card:    #0f1733;
+    --card2:   #0c1428;
+    --crimson: #c0203a;
+    --rose:    #d93050;
+    --blue:    #2952c8;
+    --sky:     #5b8fff;
+    --skylt:   #8ab4ff;
+    --text:    #e8e6f2;
+    --muted:   #6a6a9a;
+    --soft:    #9aaec8;
+  }
+
+  html { background: var(--night); }
+
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse 55% 35% at 92% 5%,  rgba(192,32,58,0.14)  0%, transparent 65%),
+      radial-gradient(ellipse 75% 55% at 8%  8%,  rgba(41,82,200,0.22)  0%, transparent 60%),
+      radial-gradient(ellipse 90% 50% at 50% 105%,rgba(26,50,140,0.18)  0%, transparent 65%),
+      var(--night);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 80px;
+    position: relative;
+  }
+
+  /* ══════════════════════════════
+     DÉCO FOND
+  ══════════════════════════════ */
+
+  /* Cœurs flottants via canvas-like spans */
+  .fh {
+    position: fixed;
+    font-size: 26px;
+    animation: floatUp linear infinite;
+    pointer-events: none;
+    z-index: 0;
+    user-select: none;
+    line-height: 1;
+  }
+  .fh:nth-child(1)  { left: 6%;  animation-duration: 19.75s; animation-delay: 0s;   color: rgba(192,32,58,0.35);  font-size: 28px; }
+  .fh:nth-child(2)  { left: 80%; animation-duration: 24.75s; animation-delay: 6s;   color: rgba(91,143,255,0.28); font-size: 24px; }
+  .fh:nth-child(3)  { left: 40%; animation-duration: 27.75s; animation-delay: 13s;  color: rgba(192,32,58,0.25);  font-size: 34px; }
+  .fh:nth-child(4)  { left: 60%; animation-duration: 21.75s; animation-delay: 3s;   color: rgba(91,143,255,0.22); font-size: 22px; }
+  .fh:nth-child(5)  { left: 22%; animation-duration: 29.75s; animation-delay: 9s;   color: rgba(192,32,58,0.20);  font-size: 26px; }
+  .fh:nth-child(6)  { left: 50%; animation-duration: 23.75s; animation-delay: 4s;   color: rgba(192,32,58,0.28);  font-size: 20px; }
+  .fh:nth-child(7)  { left: 15%; animation-duration: 26.75s; animation-delay: 17s;  color: rgba(91,143,255,0.25); font-size: 30px; }
+  .fh:nth-child(8)  { left: 70%; animation-duration: 20.75s; animation-delay: 8s;   color: rgba(192,32,58,0.22);  font-size: 18px; }
+  .fh:nth-child(9)  { left: 33%; animation-duration: 28.75s; animation-delay: 2s;   color: rgba(91,143,255,0.20); font-size: 26px; }
+  .fh:nth-child(10) { left: 88%; animation-duration: 22.75s; animation-delay: 11s;  color: rgba(192,32,58,0.18);  font-size: 22px; }
+
+  @keyframes floatUp {
+    0%   { transform: translateY(105vh) rotate(-8deg); opacity: 0; }
+    6%   { opacity: 1; }
+    88%  { opacity: 0.8; }
+    100% { transform: translateY(-10vh) rotate(8deg); opacity: 0; }
+  }
+
+  /* Lys fixes dans les coins — absolute sur body */
+  .lys {
+    position: absolute;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .lys-tl {
+    top: 30px; left: -14px;
+    transform: rotate(-14deg);
+    opacity: 0.08;
+  }
+  .lys-br {
+    top: 680px; right: -14px;
+    transform: rotate(10deg);
+    opacity: 0.07;
+  }
+
+  /* ══════════════════════════════
+     HERO
+  ══════════════════════════════ */
+  .hero {
+    width: 100%;
+    text-align: center;
+    padding: 56px 24px 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-icon {
+    font-size: 50px;
+    display: block;
+    margin-bottom: 18px;
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.07)} }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    font-weight: 700;
+    background: none;
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: rgba(210,80,100,0.90);
+    background-clip: unset;
+    color: rgba(210,80,100,0.90);
+    margin-bottom: 10px;
+  }
+
+  .hero-sub {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 300;
+  }
+
+  /* ══════════════════════════════
+     CONTENU
+  ══════════════════════════════ */
+  .content {
+    width: 100%;
+    max-width: 440px;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ══════════════════════════════
+     CARTE MESSAGE
+  ══════════════════════════════ */
+  .message-card {
+    background: var(--card);
+    border-radius: 20px;
+    border: 1px solid rgba(192,32,58,0.22);
+    padding: 26px 24px 22px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 8px 40px rgba(0,0,0,0.35),
+      0 0 50px rgba(192,32,58,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+
+  /* ligne rouge en haut */
+  .message-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(192,32,58,0.6), rgba(91,143,255,0.3), transparent);
+  }
+
+  /* lys watermark dans la carte */
+  .message-card::after {
+    content: '';
+    position: absolute;
+    bottom: -6px; right: -4px;
+    width: 76px; height: 92px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3Cg fill='none' stroke='rgba(192%2C32%2C58%2C0.13)' stroke-width='2.5'%3E%3Cellipse cx='50' cy='28' rx='9' ry='22'/%3E%3Cellipse cx='28' cy='46' rx='7' ry='17' transform='rotate(-35 28 46)'/%3E%3Cellipse cx='72' cy='46' rx='7' ry='17' transform='rotate(35 72 46)'/%3E%3Cline x1='50' y1='52' x2='50' y2='115'/%3E%3Cellipse cx='33' cy='83' rx='14' ry='5' transform='rotate(-22 33 83)'/%3E%3Cellipse cx='67' cy='95' rx='14' ry='5' transform='rotate(22 67 95)'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    pointer-events: none;
+  }
+
+  /* label rouge */
+  .message-label {
+    font-size: 9px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+
+  .message-text {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 16.5px;
+    line-height: 1.72;
+    color: var(--text);
+  }
+
+  .message-sign {
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--soft);
+    text-align: right;
+  }
+  .heart-sign { color: var(--rose); }
+
+  /* ══════════════════════════════
+     SECTION LABEL
+  ══════════════════════════════ */
+  .section-label {
+    font-size: 9px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+    padding-left: 2px;
+  }
+
+  /* ══════════════════════════════
+     BOUTON PILULE
+  ══════════════════════════════ */
+  .pill-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--crimson) 0%, var(--rose) 100%);
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    padding: 20px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 4px 28px rgba(192,32,58,0.32), inset 0 1px 0 rgba(255,255,255,0.14);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .pill-btn:active { transform: scale(0.97); }
+  .pill-btn.taken {
+    background: linear-gradient(135deg, #0f2e1a 0%, #1a4a28 100%);
+    box-shadow: 0 4px 20px rgba(0,180,70,0.10);
+    cursor: default;
+  }
+  .pill-btn.taken:active { transform: none; }
+
+  /* ══════════════════════════════
+     CARTES INFO
+  ══════════════════════════════ */
+  .info-card {
+    background: var(--card2);
+    border-radius: 16px;
+    border: 1px solid rgba(91,143,255,0.09);
+    padding: 18px 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+
+  /* ══════════════════════════════
+     STREAK
+  ══════════════════════════════ */
+  .streak-row { display: flex; align-items: center; gap: 16px; }
+  .streak-icon { font-size: 30px; }
+  .streak-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--skylt);
+    line-height: 1;
+  }
+  .streak-label { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+  /* ══════════════════════════════
+     NOTIF
+  ══════════════════════════════ */
+  .notif-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .notif-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .notif-desc  { font-size: 12px; color: var(--muted); }
+
+  .toggle { position: relative; width: 46px; height: 25px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider {
+    position: absolute; inset: 0;
+    background: #1a1e38;
+    border-radius: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 19px; height: 19px;
+    left: 3px; top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s;
+  }
+  .toggle input:checked + .toggle-slider { background: var(--blue); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(21px); }
+
+  .notif-status {
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--muted);
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+  .notif-status.active { color: var(--sky); }
+
+  /* ══════════════════════════════
+     HISTORIQUE
+  ══════════════════════════════ */
+  .history-list { display: flex; flex-direction: column; gap: 7px; }
+  .history-item {
+    background: var(--card2);
+    border-radius: 12px;
+    padding: 11px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+  .history-date { font-size: 13px; color: var(--soft); }
+  .history-badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 500; }
+  .history-badge.ok   { background: rgba(0,200,80,0.10);  color: #4dde8a; }
+  .history-badge.miss { background: rgba(255,80,80,0.10);  color: #ff7070; }
+  .history-empty { text-align: center; padding: 20px; color: var(--muted); font-size: 13px; }
+
+  /* ══════════════════════════════
+     SÉPARATEUR
+  ══════════════════════════════ */
+  .divider {
+    display: flex; align-items: center; gap: 10px;
+    margin: 4px 0;
+  }
+  .divider-line { flex: 1; height: 1px; background: rgba(91,143,255,0.15); }
+  .divider-icon { font-size: 13px; color: rgba(192,32,58,0.4); }
+
+  /* ══════════════════════════════
+     TOAST
+  ══════════════════════════════ */
+  .toast {
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #0f2e1a;
+    border: 1px solid #1c5530;
+    color: #5ddc8a;
+    padding: 13px 22px;
+    border-radius: 14px;
+    font-size: 14px; font-weight: 500;
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    z-index: 999;
+    white-space: nowrap;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ══════════════════════════════
+     FOOTER
+  ══════════════════════════════ */
+  .footer {
+    margin-top: 36px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.9;
+    position: relative; z-index: 1;
+  }
+  .footer svg { display: block; margin: 0 auto 10px; opacity: 0.25; }
+</style>
+</head>
+<body>
+
+<!-- Cœurs flottants -->
+<span class="fh">♥</span>
+<span class="fh">♥</span>
+<span class="fh">♥</span>
+<span class="fh">♥</span>
+<span class="fh">♥</span>
+<span class="fh">♥</span>
+<span class="fh">♥</span>
+<span class="fh">♥</span>
+<span class="fh">♥</span>
+<span class="fh">♥</span>
+
+<!-- Lys coins — absolute sur la page -->
+<svg class="lys lys-tl" width="120" height="150" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" stroke="rgba(91,143,255,1)" stroke-width="2.5">
+    <ellipse cx="50" cy="28" rx="9" ry="22"/>
+    <ellipse cx="28" cy="46" rx="7" ry="17" transform="rotate(-35 28 46)"/>
+    <ellipse cx="72" cy="46" rx="7" ry="17" transform="rotate(35 72 46)"/>
+    <line x1="50" y1="52" x2="50" y2="115"/>
+    <ellipse cx="33" cy="83" rx="14" ry="5" transform="rotate(-22 33 83)"/>
+    <ellipse cx="67" cy="95" rx="14" ry="5" transform="rotate(22 67 95)"/>
+  </g>
+</svg>
+
+<svg class="lys lys-br" width="110" height="138" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" stroke="rgba(192,32,58,1)" stroke-width="2.5">
+    <ellipse cx="50" cy="28" rx="9" ry="22"/>
+    <ellipse cx="28" cy="46" rx="7" ry="17" transform="rotate(-35 28 46)"/>
+    <ellipse cx="72" cy="46" rx="7" ry="17" transform="rotate(35 72 46)"/>
+    <line x1="50" y1="52" x2="50" y2="115"/>
+    <ellipse cx="33" cy="83" rx="14" ry="5" transform="rotate(-22 33 83)"/>
+    <ellipse cx="67" cy="95" rx="14" ry="5" transform="rotate(22 67 95)"/>
+  </g>
+</svg>
+
+<!-- Hero -->
+<div class="hero">
+  <span class="hero-icon">💊</span>
+  <h1 class="hero-title">Pour mon namoureuse d'amour</h1>
+  <p class="hero-sub">Ton rappel du soir</p>
+</div>
+
+<!-- Contenu -->
+<div class="content">
+
+  <div class="message-card">
+    <div class="message-label">Un mot pour toi</div>
+    <p class="message-text">
+      Hé toi… je sais que tes journées peuvent parfois être longues et pénibles. Je connaîtrai jamais ces douleurs, mais sache que même de loin je veille et m'inquiète pour toi. Alors mon cœur, ma reine d'amour… prends ta pilule.
+    </p>
+    <div class="message-sign">— Ton namoureux qui t'aime <span class="heart-sign">❤</span></div>
+  </div>
+
+  <div>
+    <div class="section-label">Ce soir</div>
+    <button class="pill-btn" id="pill-btn" onclick="takePill()">
+      <span id="pill-icon">💊</span>
+      <span id="pill-text">J'ai pris ma pilule</span>
+    </button>
+  </div>
+
+  <div>
+    <div class="section-label">Ma régularité</div>
+    <div class="info-card">
+      <div class="streak-row">
+        <div class="streak-icon">🔥</div>
+        <div>
+          <div class="streak-number" id="streak-count">0</div>
+          <div class="streak-label">jours d'affilée sans oubli</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-label">Rappel automatique</div>
+    <div class="info-card">
+      <div class="notif-row">
+        <div>
+          <div class="notif-title">Notification à 21h00</div>
+          <div class="notif-desc">Chaque soir, sans exception</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="notif-toggle" onchange="toggleNotif()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="notif-status" id="notif-status">Activer pour recevoir un rappel chaque soir</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <span class="divider-icon">♥</span>
+    <div class="divider-line"></div>
+  </div>
+
+  <div>
+    <div class="section-label">Historique</div>
+    <div class="history-list" id="history-list">
+      <div class="history-empty">Aucune prise enregistrée pour l'instant</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <svg width="24" height="30" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+    <g fill="none" stroke="rgba(91,143,255,1)" stroke-width="3">
+      <ellipse cx="50" cy="28" rx="9" ry="22"/>
+      <ellipse cx="28" cy="46" rx="7" ry="17" transform="rotate(-35 28 46)"/>
+      <ellipse cx="72" cy="46" rx="7" ry="17" transform="rotate(35 72 46)"/>
+      <line x1="50" y1="52" x2="50" y2="115"/>
+      <ellipse cx="33" cy="83" rx="14" ry="5" transform="rotate(-22 33 83)"/>
+      <ellipse cx="67" cy="95" rx="14" ry="5" transform="rotate(22 67 95)"/>
+    </g>
+  </svg>
+  Fait avec tout mon amour pour toi<br>
+  <span style="color:#5a6090">— ton namoureux qui pense à toi —</span>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const STORAGE_KEY = 'pilule_julie_v1';
+  let notifInterval = null;
+
+  function loadState() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; } }
+  function saveState(s) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
+  function todayKey() { return new Date().toISOString().slice(0, 10); }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function updatePillBtn(taken) {
+    const btn = document.getElementById('pill-btn');
+    document.getElementById('pill-icon').textContent = taken ? '✅' : '💊';
+    document.getElementById('pill-text').textContent = taken ? 'Prise ce soir — bravo mon cœur !' : "J'ai pris ma pilule";
+    taken ? btn.classList.add('taken') : btn.classList.remove('taken');
+  }
+
+  function computeStreak(h) {
+    let s = 0;
+    const today = new Date();
+    for (let i = 0; i < 365; i++) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const k = d.toISOString().slice(0, 10);
+      if (h[k] === 'taken') s++;
+      else if (i > 0) break;
+    }
+    return s;
+  }
+
+  function renderHistory(h) {
+    const list = document.getElementById('history-list');
+    const keys = Object.keys(h).filter(k => /^\d{4}-\d{2}-\d{2}$/.test(k)).sort().reverse().slice(0, 7);
+    if (!keys.length) { list.innerHTML = '<div class="history-empty">Aucune prise enregistrée pour l\'instant</div>'; return; }
+    const D = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+    const M = ['jan','fév','mar','avr','mai','juin','juil','août','sep','oct','nov','déc'];
+    list.innerHTML = keys.map(k => {
+      const d = new Date(k + 'T12:00:00');
+      const ok = h[k] === 'taken';
+      return `<div class="history-item"><span class="history-date">${D[d.getDay()]} ${d.getDate()} ${M[d.getMonth()]}</span><span class="history-badge ${ok?'ok':'miss'}">${ok?'✓ Prise':'✗ Oubliée'}</span></div>`;
+    }).join('');
+  }
+
+  function render() {
+    const s = loadState();
+    updatePillBtn(s[todayKey()] === 'taken');
+    document.getElementById('streak-count').textContent = computeStreak(s);
+    renderHistory(s);
+  }
+
+  function takePill() {
+    const s = loadState(), today = todayKey();
+    if (s[today] === 'taken') return;
+    s[today] = 'taken';
+    saveState(s);
+    render();
+    showToast('Enregistrée — fière de toi mon cœur !');
+  }
+
+  async function toggleNotif() {
+    const toggle = document.getElementById('notif-toggle');
+    const status = document.getElementById('notif-status');
+    if (!toggle.checked) {
+      clearScheduledNotif();
+      status.textContent = 'Rappel désactivé';
+      status.className = 'notif-status';
+      saveNotifPref(false); return;
+    }
+    if (!('Notification' in window)) { status.textContent = 'Notifications non supportées'; toggle.checked = false; return; }
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') {
+      status.textContent = 'Accès refusé — autorise les notifications dans les réglages';
+      status.className = 'notif-status'; toggle.checked = false; return;
+    }
+    scheduleNotif();
+    status.textContent = '✓ Rappel actif — notification chaque soir à 21h';
+    status.className = 'notif-status active';
+    saveNotifPref(true);
+  }
+
+  function scheduleNotif() {
+    clearScheduledNotif();
+    notifInterval = setInterval(() => {
+      const now = new Date();
+      if (now.getHours() === 21 && now.getMinutes() === 0) {
+        const s = loadState();
+        if (s[todayKey()] !== 'taken') {
+          new Notification('Mon cœur 💊', {
+            body: "C'est l'heure de ta pilule, ma reine",
+            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💊</text></svg>',
+            tag: 'pilule-reminder'
+          });
+        }
+      }
+    }, 30000);
+  }
+
+  function clearScheduledNotif() { if (notifInterval) { clearInterval(notifInterval); notifInterval = null; } }
+  function saveNotifPref(val) { const s = loadState(); s._notif = val; saveState(s); }
+
+  window.addEventListener('load', () => {
+    render();
+    const s = loadState();
+    const toggle = document.getElementById('notif-toggle');
+    const status = document.getElementById('notif-status');
+    if (s._notif && Notification.permission === 'granted') {
+      toggle.checked = true;
+      status.textContent = '✓ Rappel actif — notification chaque soir à 21h';
+      status.className = 'notif-status active';
+      scheduleNotif();
+    }
+  });
+</script>
+</body>
+</html>
