@@ -628,46 +628,49 @@
 </script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
+
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyCNQArb_KpJuRiJ_7H3lfPFpNrVmrO6G_4",
-  authDomain: "pilule-julie.firebaseapp.com",
-  projectId: "pilule-julie",
-  storageBucket: "pilule-julie.firebasestorage.app",
-  messagingSenderId: "455161985108",
-  appId: "1:455161985108:web:88f913e246d887725195c1"
-};
+  // 1. INIT FIREBASE
+  const firebaseConfig = {
+    apiKey: "AIzaSyCNQArb_KpJuRiJ_7H3lfPFpNrVmrO6G_4",
+    authDomain: "pilule-julie.firebaseapp.com",
+    projectId: "pilule-julie",
+    storageBucket: "pilule-julie.firebasestorage.app",
+    messagingSenderId: "455161985108",
+    appId: "1:455161985108:web:88f913e246d887725195c1"
+  };
 
-firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp(firebaseConfig);
 
-// ⚠️ IMPORTANT : messaging doit être ici
-const messaging = firebase.messaging();
-</script>
- <script>
-async function initNotif() {
+  // 2. IMPORTANT : messaging DOIT être ici
+  const messaging = firebase.messaging();
 
-  const permission = await Notification.requestPermission();
+  // 3. FUNCTION NOTIF
+  async function initNotif() {
 
-  if (permission !== "granted") {
-    alert("Notifications refusées");
-    return;
+    try {
+      const permission = await Notification.requestPermission();
+
+      if (permission !== "granted") {
+        alert("Notifications refusées");
+        return;
+      }
+
+      // IMPORTANT: token Firebase
+      const token = await messaging.getToken({
+        vapidKey: "BFV02df0IP-hQT8Qm3WYfjDaUU-lNoBiGxoGiPhhZP79VYPImCHK7xYZ8QJ6-gBIIIBjBIhRn3MVSiWOFunErhk"
+      });
+
+      console.log("TOKEN:", token);
+      alert("TOKEN récupéré (regarde console)");
+
+    } catch (err) {
+      console.error("Erreur Firebase:", err);
+      alert("Erreur Firebase (console)");
+    }
   }
 
-  try {
-    const token = await messaging.getToken({
-      vapidKey: "BFV02df0IP-hQT8Qm3WYfjDaUU-lNoBiGxoGiPhhZP79VYPImCHK7xYZ8QJ6-gBIIIBjBIhRn3MVSiWOFunErhk"
-    });
-
-    console.log("TOKEN:", token);
-    alert("TOKEN récupéré ! Regarde la console.");
-
-  } catch (err) {
-    console.error("Erreur Firebase:", err);
-    alert("Erreur Firebase (regarde console)");
-  }
-}
-
-window.initNotif = initNotif;
+  window.initNotif = initNotif;
 </script>
 </body>
 </html>
