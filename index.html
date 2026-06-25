@@ -441,7 +441,9 @@
       <span id="pill-icon">💊</span>
       <span id="pill-text">J'ai pris ma pilule</span>
     </button>
-    <button onclick="enableNotif()" class="pill-btn">🔔 Activer les notifications</button>
+    <button onclick="initNotif()" class="pill-btn">
+    🔔 Activer les notifications
+  </button>
   </div>
 
   <div>
@@ -636,8 +638,8 @@
 </script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
- <script>
-async function enableNotif() {
+<script>
+async function initNotif() {
   const permission = await Notification.requestPermission();
 
   if (permission !== "granted") {
@@ -645,8 +647,15 @@ async function enableNotif() {
     return;
   }
 
-  alert("OK notifications activées (Firebase arrive après)");
+  const token = await messaging.getToken({
+    vapidKey: "TON_VAPID_KEY"
+  });
+
+  console.log("TOKEN TELEPHONE :", token);
+  alert("Notifications OK !");
 }
+
+window.initNotif = initNotif;
 </script>
 </body>
 </html>
