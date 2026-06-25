@@ -641,6 +641,9 @@
   };
 
   firebase.initializeApp(firebaseConfig);
+ const swPromise = navigator.serviceWorker.register(
+  '/rappel-pilule-ma-julie/firebase-messaging-sw.js'
+);
 
   // 2. IMPORTANT : messaging DOIT être ici
   const messaging = firebase.messaging();
@@ -657,9 +660,12 @@ async function initNotif() {
     }
 
     // Firebase gère le service worker tout seul (IMPORTANT)
-    const token = await messaging.getToken({
-      vapidKey: "BFV02df0IP-hQT8Qm3WYfjDaUU-lNoBiGxoGiPhhZP79VYPImCHK7xYZ8QJ6-gBIIIBjBIhRn3MVSiWOFunErhk"
-    });
+const sw = await swPromise;
+
+const token = await messaging.getToken({
+  vapidKey: "BFV02df0IP-hQT8Qm3WYfjDaUU-lNoBiGxoGiPhhZP79VYPImCHK7xYZ8QJ6-gBIIIBjBIhRn3MVSiWOFunErhk",
+  serviceWorkerRegistration: sw
+});
 
     console.log("TOKEN:", token);
     alert("TOKEN récupéré (regarde console)");
